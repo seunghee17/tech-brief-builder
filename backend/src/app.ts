@@ -1,18 +1,26 @@
 import express from "express";
 import cors from "cors";
-import "./config/env";
-import { documentRouter } from "./documents/document.routes";
-import { errorMiddleware } from "./middlewares/errorMiddleware";
+import { documentRoutes } from "./documents/document.routes.js";
+import { errorMiddleware } from "./middlewares/errorMiddleware.js";
+import { env } from "./config/env.js";
 
 export const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: env.allowedOrigin,
+  })
+);
+
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
+  res.status(200).json({
+    status: "ok",
+    service: "tech-brief-builder-api",
+  });
 });
 
-app.use("/api/documents", documentRouter);
+app.use("/api/documents", documentRoutes);
 
 app.use(errorMiddleware);
