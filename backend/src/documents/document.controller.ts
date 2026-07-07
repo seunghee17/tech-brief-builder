@@ -1,30 +1,16 @@
-import type { Request, Response, NextFunction } from "express";
-import { DocumentWorkflowOrchestrator } from "./workflow/DocumentWorkflowOrchestrator";
+import type { RequestHandler } from "express";
+import type { GenerateDocumentRequest } from "./document.types.js";
+import { DocumentWorkflowOrchestrator } from "./workflow/DocumentWorkflowOrchestrator.js";
 
 const orchestrator = new DocumentWorkflowOrchestrator();
 
-export async function generateDocument(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export const generateDocument: RequestHandler = async (req, res, next) => {
   try {
-    const result = await orchestrator.generateDocument(req.body);
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-}
+    const body = req.body as GenerateDocumentRequest;
+    const result = await orchestrator.generate(body);
 
-export async function rewriteSection(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const result = await orchestrator.rewriteSection(req.body);
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
-}
+};

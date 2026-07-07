@@ -1,10 +1,12 @@
 import { Router } from "express";
-import {
-  generateDocument,
-  rewriteSection,
-} from "./document.controller";
+import { generateDocument } from "./document.controller.js";
+import { generateDocumentRequestSchema } from "./document.schema.js";
+import { validateRequest } from "../middlewares/validateRequest.js";
 
-export const documentRouter = Router();
+export const documentRoutes = Router();
 
-documentRouter.post("/generate", generateDocument);
-documentRouter.post("/rewrite-section", rewriteSection);
+documentRoutes.post(
+  "/generate",
+  validateRequest(generateDocumentRequestSchema),
+  generateDocument
+);
