@@ -1,14 +1,18 @@
-import type { Request, Response, NextFunction } from "express";
+import type { ErrorRequestHandler } from "express";
+import { AppError } from "../shared/errors/AppError.js";
 
-export function errorMiddleware(
-  error: unknown,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-) {
-  console.error(error);
+export const errorMiddleware: ErrorRequestHandler = (err, _req, res, _next) => {
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      message: err.message,
+      details: err.details,
+    });
+    return;
+  }
+
+  console.error(err);
 
   res.status(500).json({
-    message: "서버 내부 오류가 발생했습니다."
+    message: "Internal Server Error",
   });
-}
+};
