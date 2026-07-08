@@ -9,6 +9,10 @@ export const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
+    path: '/create',
+    element: <CreateDocumentPage />,
+  },
+  {
     path: '/documents/new',
     element: <CreateDocumentPage />,
   },
