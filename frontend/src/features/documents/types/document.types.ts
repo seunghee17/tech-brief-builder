@@ -30,9 +30,27 @@ export interface GenerateDocumentRequest {
   tone: Tone;
 }
 
-export interface GenerateDocumentResponse {
-  id: string;
+export interface AnalysisOutput {
+  topic: string;
+  summary: string;
+  keyPoints: string[];
+  missingInformation: string[];
+}
+
+export interface MarkdownOutput {
   title: string;
-  markdown: string;
-  createdAt: string;
+  content: string;
+}
+
+export interface QualityReport {
+  score: number;
+  isShareable: boolean;
+  missingPoints: string[];
+  improvementSuggestions: string[];
+}
+
+export interface GenerateDocumentResponse {
+  analysis: AnalysisOutput;
+  document: MarkdownOutput;
+  qualityReport: QualityReport;
 }

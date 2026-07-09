@@ -1,11 +1,15 @@
-import { httpClient } from '../../../shared/api/httpClient'
+import { httpClient } from "../../../shared/api/httpClient";
+
 import type {
   GenerateDocumentRequest,
   GenerateDocumentResponse,
-} from '../types/document.types'
+} from "../types/document.types";
 
-export function generateDocument(
-  input: GenerateDocumentRequest,
-): Promise<GenerateDocumentResponse> {
-  return httpClient.post('/api/documents/generate', input)
-}
+export const documentApi = {
+  generateDocument: (request: GenerateDocumentRequest) => {
+    return httpClient.post<GenerateDocumentResponse, GenerateDocumentRequest>(
+      "/api/documents/generate",
+      request
+    );
+  },
+};
