@@ -7,9 +7,12 @@ import type {
 
 export const documentApi = {
   generateDocument: (request: GenerateDocumentRequest) => {
-    return httpClient.post<GenerateDocumentResponse, GenerateDocumentRequest>(
+    return httpClient<GenerateDocumentResponse, GenerateDocumentRequest>(
       "/api/documents/generate",
-      request
+      {
+        method: "POST",
+        body: request
+      }
     );
   },
 };

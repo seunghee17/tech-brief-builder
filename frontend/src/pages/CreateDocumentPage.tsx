@@ -1,15 +1,25 @@
-import { DocumentForm } from '../features/documents/components/DocumentForm'
-import type { GenerateDocumentRequest } from '../features/documents/types/document.types'
-import { useFileMaterials } from '../features/documents/hooks/useFileMaterials'
+import { useNavigate } from "react-router";
+import { DocumentForm } from "../features/documents/components/DocumentForm";
+import { FileDropZone } from "../features/documents/components/FileDropzone";
 import { UploadedFileList } from "../features/documents/components/UploadedFileList";
-import { FileDropZone } from '../features/documents/components/FileDropzone';
+import { useFileMaterials } from "../features/documents/hooks/useFileMaterials";
+import { useGenerateDocument } from "../features/documents/hooks/useGenerateDocument";
+import type { GenerateDocumentRequest } from "../features/documents/types/document.types";
 
 export const CreateDocumentPage = () => {
-   const { materials, error, addFiles, removeMaterial, clearMaterials } =
+  const navigate = useNavigate();
+
+  const { materials, error, addFiles, removeMaterial, clearMaterials } =
     useFileMaterials();
 
-  const handleSubmit = (request: GenerateDocumentRequest) => {
-    console.log("문서 생성 요청:", request);
+  const { generateDocument, isLoading, errorMessage } = useGenerateDocument();
+
+  const handleSubmit = async (request: GenerateDocumentRequest) => {
+    const response = await generateDocument(request);
+
+    navigate("/documents/result", {
+      state: response,
+    });
   };
 
   return (
@@ -32,7 +42,7 @@ export const CreateDocumentPage = () => {
         <UploadedFileList materials={materials} onRemove={removeMaterial} />
 
         {materials.length > 0 && (
-          <button type="button" onClick={clearMaterials}>
+          <button type="button" onClick={clearMaterials} disabled={isLoading}>
             전체 삭제
           </button>
         )}
@@ -40,7 +50,13 @@ export const CreateDocumentPage = () => {
 
       <section>
         <h2>3. 문서 옵션 선택</h2>
-        <DocumentForm materials={materials} onSubmit={handleSubmit} />
+        <DocumentForm
+          materials={materials}
+          onSubmit={handleSubmit}
+          isSubmitting={isLoading}
+        />
+
+        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       </section>
     </main>
   );

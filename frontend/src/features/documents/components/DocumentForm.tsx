@@ -10,7 +10,8 @@ import type {
 
 interface DocumentFormProps {
   materials: UploadedMaterial[];
-  onSubmit: (request: GenerateDocumentRequest) => void;
+  onSubmit: (request: GenerateDocumentRequest) => void | Promise<void>;
+  isSubmitting?: boolean;
 }
 
 const documentTypes: { label: string; value: DocumentType }[] = [
@@ -34,7 +35,7 @@ const tones: { label: string; value: Tone }[] = [
   { label: "분석적으로", value: "ANALYTICAL" },
 ];
 
-export const DocumentForm = ({ materials, onSubmit }: DocumentFormProps) => {
+export const DocumentForm = ({ materials, onSubmit, isSubmitting = false }: DocumentFormProps) => {
   const { register, handleSubmit } = useForm<GenerateDocumentFormValues>({
     defaultValues: {
       documentType: "TECH_RESEARCH",
@@ -57,14 +58,18 @@ export const DocumentForm = ({ materials, onSubmit }: DocumentFormProps) => {
     });
   };
 
-  const isDisabled = materials.length === 0;
+  const isDisabled = materials.length === 0 || isSubmitting;
 
   return (
     <form onSubmit={handleSubmit(submit)}>
       <div>
         <label htmlFor="documentType">문서 타입</label>
         <br />
-        <select id="documentType" {...register("documentType")}>
+        <select 
+          id="documentType" 
+          {...register("documentType")}
+          disabled={isSubmitting}
+          >
           {documentTypes.map((type) => (
             <option key={type.value} value={type.value}>
               {type.label}
@@ -88,7 +93,7 @@ export const DocumentForm = ({ materials, onSubmit }: DocumentFormProps) => {
       <div>
         <label htmlFor="tone">톤앤매너</label>
         <br />
-        <select id="tone" {...register("tone")}>
+        <select id="tone" {...register("tone")} disabled={isSubmitting}>
           {tones.map((tone) => (
             <option key={tone.value} value={tone.value}>
               {tone.label}
@@ -98,7 +103,7 @@ export const DocumentForm = ({ materials, onSubmit }: DocumentFormProps) => {
       </div>
 
       <button type="submit" disabled={isDisabled}>
-        문서 생성하기
+        {isSubmitting ? "문서 생성 중..." : "문서 생성하기"}
       </button>
 
       {isDisabled && <p>문서 생성을 위해 최소 1개 이상의 파일을 추가해주세요.</p>}
