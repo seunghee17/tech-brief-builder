@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { documentRoutes } from "./documents/document.routes.js";
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
+import { requestLogger } from "./middlewares/requestLogger.js";
 import { env } from "./config/env.js";
 
 export const app = express();
@@ -13,6 +14,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(requestLogger);
 
 app.get("/health", (_req, res) => {
   res.status(200).json({
