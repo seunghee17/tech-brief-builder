@@ -16,11 +16,18 @@ export const useGenerateDocument = () => {
     try {
       setStatus("loading");
       setErrorMessage(null);
+      console.info("[document-generation] request started", {
+        documentType: request.documentType,
+      });
 
       const response = await documentApi.generateDocument(request);
 
       setData(response);
       setStatus("success");
+      console.info("[document-generation] request succeeded", {
+        documentType: request.documentType,
+        title: response.document.title,
+      });
 
       return response;
     } catch (error) {
@@ -31,6 +38,10 @@ export const useGenerateDocument = () => {
 
       setErrorMessage(message);
       setStatus("error");
+      console.error("[document-generation] request failed", {
+        documentType: request.documentType,
+        error,
+      });
 
       throw error;
     }

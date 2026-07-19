@@ -35,7 +35,11 @@ const tones: { label: string; value: Tone }[] = [
   { label: "분석적으로", value: "ANALYTICAL" },
 ];
 
-export const DocumentForm = ({ materials, onSubmit, isSubmitting = false }: DocumentFormProps) => {
+export const DocumentForm = ({
+  materials,
+  onSubmit,
+  isSubmitting = false,
+}: DocumentFormProps) => {
   const { register, handleSubmit } = useForm<GenerateDocumentFormValues>({
     defaultValues: {
       documentType: "TECH_RESEARCH",
@@ -44,12 +48,20 @@ export const DocumentForm = ({ materials, onSubmit, isSubmitting = false }: Docu
     },
   });
 
-  const submit = (values: GenerateDocumentFormValues) => {
+  const submit = async (values: GenerateDocumentFormValues) => {
     const rawNote = materials
       .map((material) => `# ${material.fileName}\n\n${material.content}`)
       .join("\n\n---\n\n");
 
-    onSubmit({
+    console.info("[document-generation] submit", {
+      documentType: values.documentType,
+      targetReader: values.targetReader,
+      tone: values.tone,
+      materialCount: materials.length,
+      rawNoteLength: rawNote.length,
+    });
+
+    await onSubmit({
       rawNote,
       references: [],
       documentType: values.documentType,
@@ -65,11 +77,11 @@ export const DocumentForm = ({ materials, onSubmit, isSubmitting = false }: Docu
       <div>
         <label htmlFor="documentType">문서 타입</label>
         <br />
-        <select 
-          id="documentType" 
+        <select
+          id="documentType"
           {...register("documentType")}
           disabled={isSubmitting}
-          >
+        >
           {documentTypes.map((type) => (
             <option key={type.value} value={type.value}>
               {type.label}
