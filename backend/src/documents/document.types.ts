@@ -45,3 +45,31 @@ export interface GenerateDocumentResponse {
   document: MarkdownOutput;
   qualityReport: QualityReport;
 }
+
+// 문서 타입별 필수 섹션 정의
+export interface DocumentSectionPolicy {
+  title: string;
+  description: string;
+  required: boolean;
+}
+
+// 문서 타입별 목적, 톤, 흐름, 품질기준
+export interface DocumentTypePolicy {
+  documentType: DocumentType;
+  name: string;
+  purpose: string;
+  toneGuide: string;
+  targetUseCase: string;
+  sections: DocumentSectionPolicy[];
+  writingGuidelines: string[];
+  qualityCriteria: string[];
+}
+
+// few-shot example로 사용할 예시문서
+export interface ReferenceDocument {
+  id: string;
+  documentType: DocumentType;
+  title: string;
+  description: string;
+  content: string;
+}
